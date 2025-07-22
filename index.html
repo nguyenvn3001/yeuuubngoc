@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nguyên Yêu Ngọc 💖</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      background: black;
+      color: white;
+      height: 100%;
+    }
+
+    #password-screen {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #ff9aff, #ffb6b6);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 100;
+    }
+
+    #password-screen input {
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    #password-screen button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: hotpink;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+    }
+
+    #error-message {
+      color: red;
+      margin-top: 10px;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .floating-text-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .floating-text {
+      position: absolute;
+      font-size: 24px;
+      font-weight: bold;
+      color: hotpink;
+      animation: floatText 10s linear infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes floatText {
+      0% {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="password-screen">
+    <h2>Nhập mật khẩu để vào ✨</h2>
+    <input type="password" id="password" placeholder="Mật khẩu là gì nhỉ..." />
+    <button onclick="checkPassword()">Vào nào 💗</button>
+    <p id="error-message"></p>
+  </div>
+
+  <div id="main-content" style="display:none">
+    <audio autoplay loop>
+      <source src="bg.mp3" type="audio/mpeg">
+    </audio>
+    <button id="music-toggle" style="position:fixed;top:10px;right:10px;z-index:999;
+      padding:8px 12px;background:hotpink;color:white;border:none;
+      border-radius:8px;cursor:pointer;">Tắt nhạc 🔇</button>
+    <canvas id="starfield"></canvas>
+    <div class="floating-text-container" id="text-container"></div>
+  </div>
+
+  <script>
+    const messages = [
+      "Nguyên yêu Ngọc lắm aaa","Nguyên chỉ cần Ngọc thoi aaa","Vợ ơi Nguyên yêu vợ aaa",
+      "Mãi bên nhau vợ nháaa","Yêu vợ nhiều aaa","Nguyên nhớ vợ ròiii",
+      "Cảm ơn Ngọc đã đến với cuộc đời Nguyên","Nguyên sẽ cưới Ngọc ạaa",
+      "Nguyên mãi yêu Ngọc","Ngọc là tất cả với Nguyên","Nguyên thương Ngọc nhiều lắm",
+      "Nguyên yêu vợ từ trái tim","Vợ là hạnh phúc của Nguyên","Nguyên mê Ngọc lắmm",
+      "Vợ yêu tuyệt nhất trên đời","Yêu Ngọc cả đời aaa","Anh yêu vợ aaaa",
+      "💖","❤️","💗","💓","💞","💕","💘","💝"
+    ];
+
+    function checkPassword() {
+      const password = document.getElementById('password').value;
+      if (password === 'ngocyeu') {
+        document.getElementById('password-screen').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+        const music = document.querySelector("audio");
+        music.play(); // bật nhạc ngay sau khi vào
+        generateText();
+        startStars();
+      } else {
+        document.getElementById('error-message').innerText = 'Sai òii, thử lại đi 😭';
+      }
+    }
+
+    function generateText() {
+      const container = document.getElementById('text-container');
+      setInterval(() => {
+        for(let i=0; i<3; i++){
+          const text = document.createElement('div');
+          text.className = 'floating-text';
+          text.innerText = messages[Math.floor(Math.random() * messages.length)];
+          text.style.left = Math.random() * 90 + '%';
+          text.style.fontSize = (Math.random() * 20 + 20) + 'px';
+          text.style.animationDuration = (Math.random() * 10 + 10) + 's';
+          text.style.color = ['#ff66cc', '#ff99cc', '#ff3399', '#ff66ff'][Math.floor(Math.random() * 4)];
+          container.appendChild(text);
+          setTimeout(() => text.remove(), 20000);
+        }
+      }, 250);
+    }
+
+    function startStars() {
+      const canvas = document.getElementById("starfield");
+      const ctx = canvas.getContext("2d");
+      let stars = [];
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      for (let i = 0; i < 200; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 1.5,
+          speed: Math.random() * 0.5 + 0.2
+        });
+      }
+
+      function animate() {
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "white";
+        stars.forEach(star => {
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+          ctx.fill();
+
+          star.y -= star.speed;
+          if (star.y < 0) {
+            star.y = canvas.height;
+            star.x = Math.random() * canvas.width;
+          }
+        });
+
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    const music = document.querySelector("audio");
+    const toggleBtn = document.getElementById("music-toggle");
+    toggleBtn.addEventListener("click", () => {
+      if (music.paused) {
+        music.play();
+        toggleBtn.textContent = "Tắt nhạc 🔇";
+      } else {
+        music.pause();
+        toggleBtn.textContent = "Bật nhạc 🔊";
+      }
+    });
+  </script>
+</body>
+</html>
+
+
